@@ -1,22 +1,69 @@
 <html>
 	
 	<head>
-		<title>Bonjour2</title>
-		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<title>Jeux</title>
+		<script type="text/javascript" src="js/phaser.min.js"></script>
+
 	</head>
 	<body>
-	<a href="index.html">C'est mon deuxieme test</a>
+		<script type="text/javascript">
 
+		var game = new Phaser.Game(800, 800, Phaser.AUTO, '', { preload: chargement, create: creation, update: actions });
+		var sol;
+		var bonhomme;
+		var cursors;
 
+		function chargement(){
+			game.load.image('sol', 'images/platform.png');
+			game.load.spritesheet('bonhomme', 'images/dude.png', 32, 48);			
+		}
+		
+		function creation() {
+			game.physics.startSystem(Phaser.Physics.ARCADE);
+			//console.log(game.world.height);
+		
+			sol = game.add.sprite(0, 3*game.world.height/4, 'sol');
+			sol.scale.setTo(2, game.world.height/128);
+			game.physics.arcade.enable(sol);
+			sol.body.immovable = true;
+			
+			bonhomme = game.add.sprite(0, 0, 'bonhomme');
+			game.physics.arcade.enable(bonhomme);
+			bonhomme.body.gravity.y = 350;
+			bonhomme.body.collideWorldBounds = true;
+			bonhomme.animations.add('gauche', [0, 1, 2, 3], 10, true);
+			bonhomme.animations.add('droite', [5, 6, 7, 8], 10, true);
 
+			cursors = game.input.keyboard.createCursorKeys();
 
+		}
+		
+		function actions(){
+			//console.log(game.world.height);
+			game.physics.arcade.collide(bonhomme, sol);
 
+			if (cursors.left.isDown){
 
+				bonhomme.body.velocity.x = -150;
+				bonhomme.animations.play('gauche');
 
+			} else if (cursors.right.isDown){
 
+				bonhomme.body.velocity.x = 150;
+				bonhomme.animations.play('droite');
 
+			} else {
 
+				bonhomme.animations.stop();
+				bonhomme.body.velocity.x = 0;
+				bonhomme.frame = 4;
+			}
+			if (cursors.up.isDown && bonhomme.body.touching.down){
 
+				bonhomme.body.velocity.y = -500;
+			}
 
+		}
+		</script>
 	</body>
-	</html>
+</html>
